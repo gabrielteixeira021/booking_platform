@@ -5,11 +5,11 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class Service(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    duration_minutes = models.PositiveIntegerField(_(""))
-    price = models.DecimalField(_(""), max_digits=8, decimal_places=2)
-    is_active = models.BooleanField(_(""), default=True)
+    name = models.CharField(_("nome"),max_length=100)
+    description = models.TextField(_("descrição"), blank=True)
+    duration_minutes = models.PositiveIntegerField(_("duração (min)"))
+    price = models.DecimalField(_("preço"), max_digits=8, decimal_places=2)
+    is_active = models.BooleanField(_("está ativo"), default=True)
 
     def __str__(self):
         return self.name
@@ -23,7 +23,7 @@ class Appointment(models.Model):
     
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Cliente"), on_delete=models.CASCADE, related_name="appointments")
     
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="appointments")
+    service = models.ForeignKey(Service, verbose_name=_("Serviço"), on_delete=models.CASCADE, related_name="appointments")
 
     start_time = models.DateTimeField(_("início do serviço"), auto_now=False, auto_now_add=False) 
     end_time = models.DateTimeField(_("término do serviço"), auto_now=False, auto_now_add=False)
