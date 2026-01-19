@@ -131,6 +131,6 @@ STATIC_URL = 'static/'
 
 
 # Auth config
-LOGIN_URL = '/login/' # pra onde vai quem n ta logado
-LOGIN_REDIRECT_URL = '/dashboard'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/accounts/login/' # pra onde vai quem n ta logado
+LOGIN_REDIRECT_URL = '/accounts/dashboard/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
