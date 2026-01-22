@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*')
 
 DATABASES = {
     "default": {
@@ -129,6 +129,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
 
 # Auth config
 LOGIN_URL = '/accounts/login/' # pra onde vai quem n ta logado

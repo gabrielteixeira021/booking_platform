@@ -1,11 +1,17 @@
 from django.urls import path 
 from django.contrib.auth.views import LoginView
 
-from . import views
+from .views import *
 
 urlpatterns = [
-    path('register/', views.RegisterCreateView.as_view(), name='register'),
+    # rotas de autenticação e dashboard
+    path('register/', RegisterCreateView.as_view(), name='register'),
     path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('dashboard/', views.dashboard, name='dashboard'),
+    path('logout/', logout_view, name='logout'),
+    path('dashboard/', dashboard, name='dashboard'),
+    # rotas do crud de serviços
+    path("services/", ServiceListView.as_view(), name="service_list"),
+    path("services/create/", ServiceCreateView.as_view(), name="service_create"),
+    path("services/<int:pk>/edit/", ServiceUpdateView.as_view(), name="service_update"),
+    path("services/<int:pk>/delete/", ServiceDeleteView.as_view(), name="service_delete")
 ]
