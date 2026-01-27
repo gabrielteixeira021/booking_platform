@@ -2,11 +2,15 @@ from django.urls import path
 from django.contrib.auth.views import LoginView
 
 from .views import *
+from .forms import CustomAuthenticationForm
 
 urlpatterns = [
     # rotas de autenticação e dashboard
     path('register/', RegisterCreateView.as_view(), name='register'),
-    path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', LoginView.as_view(
+        template_name='registration/login.html',
+        authentication_form=CustomAuthenticationForm
+    ), name='login'),
     path('logout/', logout_view, name='logout'),
     path('dashboard/', dashboard, name='dashboard'),
     # rotas do crud de serviços
