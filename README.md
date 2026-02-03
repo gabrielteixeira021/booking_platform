@@ -197,4 +197,6 @@ Para dúvidas ou sugestões, entre em contato através do GitHub.
 
 ---
 
+Projeto desenvolvido para fins educativos.
+
 ⭐ Se este projeto foi útil para você, considere dar uma estrela no repositório!
