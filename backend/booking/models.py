@@ -38,31 +38,37 @@ class Appointment(models.Model):
         if self.start_time and self.start_time < timezone.now():
             raise ValidationError("Não é possível agendar no passado")
         
+        # Calcula end_time se não estiver definido (necessário para validação de conflito)
+        if self.service and self.start_time and not self.end_time:
+            self.end_time = self.start_time + timedelta(
+                minutes=self.service.duration_minutes
+            )
+        
         if self.end_time and self.end_time <= self.start_time:
             raise ValidationError("Horário final deve ser depoiis do inicial")
 
         # Valida se há confilto de horário
-        qs = Appointment.objects.filter(service=self.service)
-        if self.pk:
-            qs = qs.exclude(pk=self.pk)
+        if self.service and self.start_time and self.end_time:
+            qs = Appointment.objects.filter(service=self.service)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
 
-        # condição de overlap(sobreposição): start < outro_end e end > outro_start | quando o tempo de um serviço coincide com o de outro
-        overlap = qs.filter(
-            start_time__lt=self.end_time,
-            end_time__gt=self.start_time
-        ).exists()
+            # condição de overlap(sobreposição): start < outro_end e end > outro_start | quando o tempo de um serviço coincide com o de outro
+            overlap = qs.filter(
+                start_time__lt=self.end_time,
+                end_time__gt=self.start_time
+            ).exists()
 
-        if overlap:
-            raise ValidationError("Já existe um agendamento nesse horário")
-        
-        def save(self, *args, **kwargs):
-            # calcula end_time automaticamente baseado na duração do serviço
-            if self.service and self.start_time and not self.end_time:
-                self.end_time = self.start_time + timedelta(
-                    minutes=self.service.duration_minutes
-                )
-            super().save(*args, **kwargs)
-
+            if overlap:
+                raise ValidationError("Já existe um agendamento nesse horário")
+    
+    def save(self, *args, **kwargs):
+        # calcula end_time automaticamente baseado na duração do serviço
+        if self.service and self.start_time and not self.end_time:
+            self.end_time = self.start_time + timedelta(
+                minutes=self.service.duration_minutes
+            )
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ["-start_time"]

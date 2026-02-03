@@ -19,3 +19,13 @@ urlpatterns = [
     path("services/<int:pk>/edit/", ServiceUpdateView.as_view(), name="service_update"),
     path("services/<int:pk>/delete/", ServiceDeleteView.as_view(), name="service_delete"),
 ]
+
+# fluxo de agendamento
+urlpatterns += [
+    path("appointments/", AppointmentListView.as_view(), name="appointment_list"),
+    path(
+        "appointments/new/",
+        AppointmentCreateView.as_view(),
+        name="appointment_create",
+    )
+]

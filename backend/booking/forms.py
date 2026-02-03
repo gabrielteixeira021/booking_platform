@@ -2,6 +2,37 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
+from .models import Appointment
+
+class AppointmentForm(forms.ModelForm):
+    """Formulário para realização do agendamentoo"""
+    class Meta:
+        model = Appointment
+        fields = ["service", "start_time"]
+
+        # representa os campos
+        widgets = {
+            "start_time": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                    "class": "form-control",
+                }
+            ),
+            "service": forms.Select(attrs={"class": "form-control"})
+        }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        # delega verificação de conflito para o model.clean()
+        instance = Appointment(
+            customer=self.initial.get("customer"),
+            service=cleaned_data.get("service"),
+            start_time=cleaned_data.get("start_time"),
+        )
+        # chama o metodo clean para validar  conflito/horário
+        instance.clean()
+        return cleaned_data
+
 class CustomUserCreationForm(UserCreationForm):
     """Formulario de cadastro personalizado"""
 
