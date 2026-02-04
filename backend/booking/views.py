@@ -13,7 +13,36 @@ from .forms import CustomUserCreationForm, AppointmentForm
 
 
 # Create your views here.
+@login_required 
+def appointment_create_view(request):
+    """lógica de agendamento de serviços Function-Based"""
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.customer = request.user
+            appointment.save()
+            return redirect("appointment_list")  # redireciona para a lista de agendamentos
+    else:
+        form = AppointmentForm()
+    
+    services = Service.objects.filter(is_active=True)[:5]
+    context = {
+        "form": form,
+        "services": services
+    }
+    return render(request, "appointments/appointment_form.html", context)
 
+
+@login_required
+def appointment_list_view(request):
+    appointments = Appointment.objects.filter(customer=request.user).order_by('-scheduled_at')
+    context = {
+        "appointments": appointments
+    }
+    return render(request, "appointments/appointment_list.html", context)
+
+# CBV 
 class RegisterCreateView(CreateView):
     form_class = CustomUserCreationForm
     template_name = "registration/register.html"
