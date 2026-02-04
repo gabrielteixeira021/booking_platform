@@ -14,34 +14,6 @@ from .forms import CustomUserCreationForm, AppointmentForm
 
 # Create your views here.
 
-@method_decorator(login_required, name="dispatch")
-class AppointmentCreateView(CreateView):
-    model = Appointment
-    form_class = AppointmentForm
-    template_name = "appointments/appointment_form.html"
-    success_url = reverse_lazy("appointment_list")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.setdefault("initial", {})
-        kwargs["initial"]["customer"] = self.request.user
-        return kwargs
-    
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        appointment = form.save(commit=False)
-        appointment.customer = self.request.user
-        appointment.save()
-        return super().form_valid(form)
-
-@method_decorator(login_required, name="dispatch")
-class AppointmentListView(ListView):
-    model = Appointment
-    template_name = "appointments/appointment_list.html"
-    context_object_name  = "appointments"
-    def get_queryset(self):
-        return Appointment.objects.filter(customer=self.request.user).order_by("start_time")
-    
-
 class RegisterCreateView(CreateView):
     form_class = CustomUserCreationForm
     template_name = "registration/register.html"
