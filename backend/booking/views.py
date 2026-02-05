@@ -36,7 +36,8 @@ def appointment_create_view(request):
 
 @login_required
 def appointment_list_view(request):
-    appointments = Appointment.objects.filter(customer=request.user).order_by('-scheduled_at')
+    """lista os agendamentos do usuário logado Function-Based"""
+    appointments = Appointment.objects.filter(customer=request.user).order_by('-start_time')
     context = {
         "appointments": appointments
     }

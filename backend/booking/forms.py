@@ -6,11 +6,11 @@ from .models import Appointment
 
 class AppointmentForm(forms.ModelForm):
     """Formulário para realização do agendamentoo"""
+
     class Meta:
         model = Appointment
         fields = ["service", "start_time"]
 
-        # representa os campos
         widgets = {
             "start_time": forms.DateTimeInput(
                 attrs={
