@@ -13,35 +13,37 @@ from .forms import CustomUserCreationForm, AppointmentForm
 
 
 # Create your views here.
-
-@method_decorator(login_required, name="dispatch")
-class AppointmentCreateView(CreateView):
-    model = Appointment
-    form_class = AppointmentForm
-    template_name = "appointments/appointment_form.html"
-    success_url = reverse_lazy("appointment_list")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.setdefault("initial", {})
-        kwargs["initial"]["customer"] = self.request.user
-        return kwargs
+@login_required 
+def appointment_create_view(request):
+    """lógica de agendamento de serviços Function-Based"""
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.customer = request.user
+            appointment.save()
+            return redirect("appointment_list")  # redireciona para a lista de agendamentos
+    else:
+        form = AppointmentForm()
     
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        appointment = form.save(commit=False)
-        appointment.customer = self.request.user
-        appointment.save()
-        return super().form_valid(form)
+    services = Service.objects.filter(is_active=True)[:5]
+    context = {
+        "form": form,
+        "services": services
+    }
+    return render(request, "appointments/appointment_form.html", context)
 
-@method_decorator(login_required, name="dispatch")
-class AppointmentListView(ListView):
-    model = Appointment
-    template_name = "appointments/appointment_list.html"
-    context_object_name  = "appointments"
-    def get_queryset(self):
-        return Appointment.objects.filter(customer=self.request.user).order_by("start_time")
-    
 
+@login_required
+def appointment_list_view(request):
+    """lista os agendamentos do usuário logado Function-Based"""
+    appointments = Appointment.objects.filter(customer=request.user).order_by('-start_time')
+    context = {
+        "appointments": appointments
+    }
+    return render(request, "appointments/appointment_list.html", context)
+
+# CBV 
 class RegisterCreateView(CreateView):
     form_class = CustomUserCreationForm
     template_name = "registration/register.html"

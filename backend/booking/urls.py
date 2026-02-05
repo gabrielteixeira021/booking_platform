@@ -22,10 +22,6 @@ urlpatterns = [
 
 # fluxo de agendamento
 urlpatterns += [
-    path("appointments/", AppointmentListView.as_view(), name="appointment_list"),
-    path(
-        "appointments/new/",
-        AppointmentCreateView.as_view(),
-        name="appointment_create",
-    )
+    path("appointments/", appointment_list_view, name="appointment_list"),
+    path("appointments/new/", appointment_create_view, name="appointment_create"),
 ]
